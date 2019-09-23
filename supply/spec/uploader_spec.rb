@@ -174,16 +174,16 @@ describe Supply do
         Supply.config = config
         allow(Supply::Client).to receive(:make_from_config).and_return(client)
         allow(client).to receive(:track_version_codes).and_return(version_codes)
-        allow(client).to receive(:update_track).with(config[:track], 0.1, nil)
-        allow(client).to receive(:update_track).with(config[:track_promote_to], 0.1, version_codes)
+        allow(client).to receive(:update_edit_track).with(config[:track], 0.1, nil)
+        allow(client).to receive(:update_edit_track).with(config[:track_promote_to], 0.1, version_codes)
       end
 
       context 'when deactivate_on_promote is true' do
         it 'should update track multiple times' do
           Supply.config[:deactivate_on_promote] = true
 
-          expect(client).to receive(:update_track).with(config[:track], 0.1, nil).once
-          expect(client).to receive(:update_track).with(config[:track_promote_to], 0.1, version_codes).once
+          expect(client).to receive(:update_edit_track).with(config[:track], 0.1, nil).once
+          expect(client).to receive(:update_edit_track).with(config[:track_promote_to], 0.1, version_codes).once
           subject
         end
       end
@@ -192,8 +192,8 @@ describe Supply do
         it 'should only update track once' do
           Supply.config[:deactivate_on_promote] = false
 
-          expect(client).not_to(receive(:update_track).with(config[:track], 0.1, nil))
-          expect(client).to receive(:update_track).with(config[:track_promote_to], 0.1, version_codes).once
+          expect(client).not_to(receive(:update_edit_track).with(config[:track], 0.1, nil))
+          expect(client).to receive(:update_edit_track).with(config[:track_promote_to], 0.1, version_codes).once
           subject
         end
       end
@@ -215,13 +215,13 @@ describe Supply do
           []
         end
 
-        allow(client).to receive(:update_track) do |track, rollout, apk_version_code|
+        allow(client).to receive(:update_edit_track) do |track, rollout, apk_version_code|
           expect(track).to eq('beta').or(eq('rollout')).or(eq('alpha'))
           expect(rollout).to eq(1.0)
           expect(apk_version_code).to be_empty
         end
 
-        expect(client).to receive(:update_track).exactly(3).times
+        expect(client).to receive(:update_edit_track).exactly(3).times
 
         Supply.config = {
           track: 'internal'
@@ -235,13 +235,13 @@ describe Supply do
           []
         end
 
-        allow(client).to receive(:update_track) do |track, rollout, apk_version_code|
+        allow(client).to receive(:update_edit_track) do |track, rollout, apk_version_code|
           expect(track).to eq('alpha')
           expect(rollout).to eq(1.0)
           expect(apk_version_code).to be_empty
         end
 
-        expect(client).to receive(:update_track).exactly(1).times
+        expect(client).to receive(:update_edit_track).exactly(1).times
 
         Supply.config = {
           track: 'beta'
@@ -255,13 +255,13 @@ describe Supply do
           []
         end
 
-        allow(client).to receive(:update_track) do |track, rollout, apk_version_code|
+        allow(client).to receive(:update_edit_track) do |track, rollout, apk_version_code|
           expect(track).to eq('internal')
           expect(rollout).to eq(1.0)
           expect(apk_version_code).to be_empty
         end
 
-        expect(client).to receive(:update_track).exactly(1).times
+        expect(client).to receive(:update_edit_track).exactly(1).times
 
         Supply.config = {
           track: 'alpha'
@@ -278,13 +278,13 @@ describe Supply do
           []
         end
 
-        allow(client).to receive(:update_track) do |track, rollout, apk_version_code|
+        allow(client).to receive(:update_edit_track) do |track, rollout, apk_version_code|
           expect(track).to eq('rollout').or(eq('alpha')).or(eq('internal'))
           expect(rollout).to eq(1.0)
           expect(apk_version_code).to be_empty
         end
 
-        expect(client).to receive(:update_track).exactly(3).times
+        expect(client).to receive(:update_edit_track).exactly(3).times
 
         Supply.config = {
           track: 'beta'
@@ -302,13 +302,13 @@ describe Supply do
           []
         end
 
-        allow(client).to receive(:update_track) do |track, rollout, apk_version_code|
+        allow(client).to receive(:update_edit_track) do |track, rollout, apk_version_code|
           expect(track).to eq('rollout').or(eq('alpha')).or(eq('custom')).or(eq('internal'))
           expect(rollout).to eq(1.0)
           expect(apk_version_code).to be_empty
         end
 
-        expect(client).to receive(:update_track).exactly(2).times
+        expect(client).to receive(:update_edit_track).exactly(2).times
 
         Supply.config = {
           track: 'alpha'
@@ -326,13 +326,13 @@ describe Supply do
           []
         end
 
-        allow(client).to receive(:update_track) do |track, rollout, apk_version_code|
+        allow(client).to receive(:update_edit_track) do |track, rollout, apk_version_code|
           expect(track).to eq('rollout').or(eq('alpha')).or(eq('custom')).or(eq('internal'))
           expect(rollout).to eq(1.0)
           expect(apk_version_code).to be_empty
         end
 
-        expect(client).to receive(:update_track).exactly(2).times
+        expect(client).to receive(:update_edit_track).exactly(2).times
 
         Supply.config = {
           track: 'custom'
@@ -355,7 +355,7 @@ describe Supply do
 
       it 'should update track with correct version codes' do
         uploader = Supply::Uploader.new
-        expect(uploader).to receive(:update_track).with([1, 2, 3]).once
+        expect(uploader).to receive(:update_edit_track).with([1, 2, 3]).once
         uploader.perform_upload
       end
     end

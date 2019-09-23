@@ -1,5 +1,5 @@
 require 'googleauth'
-require 'google/apis/androidpublisher_v2'
+require 'google/apis/androidpublisher_v3'
 Androidpublisher = Google::Apis::AndroidpublisherV3
 
 require 'net/http'
@@ -176,7 +176,7 @@ module Supply
     def listings
       ensure_active_edit!
 
-      result = call_google_api { client.list_listings(current_package_name, current_edit.id) }
+      result = call_google_api { client.list_edit_listings(current_package_name, current_edit.id) }
 
       return result.listings.map do |row|
         Listing.new(self, row.language, row)
@@ -188,7 +188,7 @@ module Supply
       ensure_active_edit!
 
       begin
-        result = client.get_listing(
+        result = client.get_edit_listing(
           current_package_name,
           current_edit.id,
           language
@@ -205,7 +205,7 @@ module Supply
     def apks_version_codes
       ensure_active_edit!
 
-      result = call_google_api { client.list_apks(current_package_name, current_edit.id) }
+      result = call_google_api { client.list_edit_apks(current_package_name, current_edit.id) }
 
       return Array(result.apks).map(&:version_code)
     end
@@ -241,7 +241,7 @@ module Supply
     #####################################################
 
     # Updates or creates the listing for the specified language
-    def update_listing_for_language(language: nil, title: nil, short_description: nil, full_description: nil, video: nil)
+    def update_edit_listing_for_language(language: nil, title: nil, short_description: nil, full_description: nil, video: nil)
       ensure_active_edit!
 
       listing = Androidpublisher::Listing.new({
@@ -253,7 +253,7 @@ module Supply
       })
 
       call_google_api do
-        client.update_listing(
+        client.update_edit_listing(
           current_package_name,
           current_edit.id,
           language,
@@ -266,7 +266,7 @@ module Supply
       ensure_active_edit!
 
       result_upload = call_google_api do
-        client.upload_apk(
+        client.upload_edit_apk(
           current_package_name,
           current_edit.id,
           upload_source: path_to_apk
@@ -307,7 +307,7 @@ module Supply
     end
 
     # Updates the track for the provided version code(s)
-    def update_track(track, rollout, apk_version_code)
+    def update_edit_track(track, rollout, apk_version_code)
       ensure_active_edit!
 
       track_version_codes = apk_version_code.kind_of?(Array) ? apk_version_code : [apk_version_code]
@@ -324,7 +324,7 @@ module Supply
       })
 
       call_google_api do
-        client.update_track(
+        client.update_edit_track(
           current_package_name,
           current_edit.id,
           track,
@@ -338,7 +338,7 @@ module Supply
       ensure_active_edit!
 
       begin
-        result = client.get_track(
+        result = client.get_edit_track(
           current_package_name,
           current_edit.id,
           track
@@ -394,7 +394,7 @@ module Supply
       ensure_active_edit!
 
       result = call_google_api do
-        client.list_images(
+        client.list_edit_images(
           current_package_name,
           current_edit.id,
           language,
@@ -410,7 +410,7 @@ module Supply
       ensure_active_edit!
 
       call_google_api do
-        client.upload_image(
+        client.upload_edit_image(
           current_package_name,
           current_edit.id,
           language,
@@ -425,7 +425,7 @@ module Supply
       ensure_active_edit!
 
       call_google_api do
-        client.delete_all_images(
+        client.deleteall_edit_image(
           current_package_name,
           current_edit.id,
           language,
@@ -438,7 +438,7 @@ module Supply
       ensure_active_edit!
 
       call_google_api do
-        client.upload_expansion_file(
+        client.upload_edit_expansionfile(
           current_package_name,
           current_edit.id,
           apk_version_code,
