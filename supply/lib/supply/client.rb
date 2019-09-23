@@ -1,6 +1,6 @@
 require 'googleauth'
 require 'google/apis/androidpublisher_v2'
-Androidpublisher = Google::Apis::AndroidpublisherV2
+Androidpublisher = Google::Apis::AndroidpublisherV3
 
 require 'net/http'
 
